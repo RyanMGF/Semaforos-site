@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport meta tag para garantir a responsividade em todos os dispositivos -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinal de Trânsito - Autocuidado em Saúde Mental</title>
+    <!-- Tailwind CSS CDN - Framework mobile-first para responsividade -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Google Fonts: Inter - Pesos atualizados para melhor flexibilidade na tipografia -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos base para o corpo da página */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Fundo azul-acinzentado muito claro */
+            color: #212529; /* Cinza muito escuro para o texto geral, contraste máximo */
+            scroll-behavior: smooth; /* Rolagem suave para links de âncora */
+        }
+        /* Largura máxima para o contêiner de conteúdo */
+        .container {
+            max-width: 1200px;
+        }
+        /* Flexbox para os cartões do semáforo */
+        .traffic-light-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2.5rem; /* Espaçamento aumentado entre os cartões */
+            margin-top: 2.5rem;
+        }
+        /* Estilização para cada cartão do semáforo */
+        .light-card {
+            background-color: #fff;
+            border-radius: 1.25rem; /* Cantos ligeiramente mais arredondados */
+            padding: 2.5rem; /* Preenchimento aumentado */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* Sombra sutil mais forte */
+            text-align: center;
+            flex: 1 1 320px; /* Ajuste do dimensionamento responsivo do item flex */
+            min-width: 280px; /* Largura mínima para evitar encolhimento excessivo em telas pequenas */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease; /* Efeitos de hover suaves + borda */
+            border: 3px solid transparent; /* Borda transparente padrão */
+        }
+        /* Efeito de hover para os cartões de luz */
+        .light-card:hover {
+            transform: translateY(-8px); /* Efeito de elevação mais pronunciado no hover */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Sombra aprimorada no hover */
+        }
+        /* Destaque para o cartão de luz ativo */
+        .light-card.highlight {
+            border: 3px solid #007bff; /* Borda azul brilhante para destaque */
+            box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); /* Efeito de brilho para destaque */
+        }
+
+        /* Contêiner SVG do semáforo */
+        .traffic-light-display {
+            width: 85px; /* Ligeiramente maior */
+            height: 170px; /* Altura ajustada para melhor proporção */
+            margin: 0 auto 2rem; /* Centralizar e adicionar mais margem abaixo */
+            background-color: #4a6c7c; /* Teal/azul mais escuro para o corpo do semáforo */
+            border-radius: 12px; /* Cantos arredondados para o corpo da luz */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 0;
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6); /* Sombra interna mais profunda para profundidade */
+        }
+        /* Círculos de luz individuais dentro do semáforo */
+        .traffic-light-circle {
+            width: 55px; /* Círculos ligeiramente maiores */
+            height: 55px;
+            border-radius: 50%; /* Tornar os círculos redondos */
+            background-color: rgba(0, 0, 0, 0.3); /* Estado padrão escuro */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Transições suaves */
+            border: 4px solid rgba(255, 255, 255, 0.15); /* Borda ligeiramente mais espessa para definição */
+        }
+        /* Estado ativo (aceso) para cada luz */
+        .light-card.green .traffic-light-circle.green-light {
+            background-color: #28a745; /* Verde vibrante */
+            box-shadow: 0 0 20px #28a745, 0 0 40px #28a745, 0 0 60px #28a745; /* Brilho verde mais forte */
+        }
+        .light-card.yellow .traffic-light-circle.yellow-light {
+            background-color: #ffc107; /* Amarelo-laranja brilhante */
+            box-shadow: 0 0 20px #ffc107, 0 0 40px #ffc107, 0 0 60px #ffc107; /* Brilho amarelo mais forte */
+        }
+        .light-card.red .traffic-light-circle.red-light {
+            background-color: #dc3545; /* Vermelho padrão */
+            box-shadow: 0 0 20px #dc3545, 0 0 40px #dc3545, 0 0 60px #dc3545; /* Brilho vermelho mais forte */
+        }
+        /* Fundo gradiente para o cabeçalho e CTA */
+        .gradient-bg {
+            background: radial-gradient(circle at top left, #2ED0B4 0%, #007BFF 50%, #4a6c7c 100%);
+            background-size: 200% 200%; /* Torna o fundo maior para a animação */
+            animation: gradientMove 15s ease infinite alternate; /* Anima a posição do gradiente */
+            position: relative; /* Necessário para pseudo-elementos */
+            overflow: hidden; /* Ocultar estouro de pseudo-elementos */
+        }
+
+        /* Animação do gradiente de fundo */
+        @keyframes gradientMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        /* Pseudo-elemento para padrão abstrato no cabeçalho (mantido sutil) */
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background: url('https://placehold.co/100x100/ffffff/ffffff?text=+') no-repeat center center; /* Placeholder para um padrão abstrato sutil */
+            background-size: cover;
+            opacity: 0.08; /* Muito sutil */
+            z-index: 0;
+            transform: rotate(15deg); /* Leve rotação para um toque dinâmico */
+        }
+        .gradient-bg > * { /* Garantir que o conteúdo esteja acima do pseudo-elemento */
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Estilização para os cartões de recursos */
+        .feature-card {
+            background-color: #fff;
+            border-radius: 1.25rem; /* Cantos ligeiramente mais arredondados */
+            padding: 2.5rem; /* Preenchimento aumentado */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* Sombra sutil mais forte */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efeitos de hover suaves */
+            display: flex; /* Flexbox para alinhamento de ícone e texto */
+            flex-direction: column; /* Empilhar ícone e texto verticalmente */
+            align-items: center; /* Centralizar conteúdo horizontalmente */
+            text-align: center; /* Centralizar texto */
+        }
+        /* Efeito de hover para os cartões de recursos */
+        .feature-card:hover {
+            transform: translateY(-8px); /* Efeito de elevação mais pronunciado no hover */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Sombra aprimorada no hover */
+        }
+        /* Animação para o botão do cabeçalho */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .animate-pulse-once {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Estilos de texto específicos para aparência aprimorada */
+        h1 {
+            font-size: 5rem; /* Título principal ainda maior */
+            line-height: 1.1;
+            font-weight: 900; /* Extra bold */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra sutil no texto */
+        }
+        h2 {
+            font-size: 3.8rem; /* Títulos de seção maiores */
+            line-height: 1.2;
+            font-weight: 800; /* Extra bold */
+            color: #004d80; /* Azul profundo forte para cabeçalhos */
+        }
+        h3 {
+            font-size: 2.5rem; /* Títulos de cartão maiores */
+            font-weight: 700; /* Negrito */
+            color: #344e41; /* Verde-azul escuro */
+        }
+        h4 {
+            font-size: 1.9rem; /* Subtítulos maiores */
+            font-weight: 600; /* Semi-negrito */
+            color: #17a2b8; /* Azul/verde-azulado vibrante mais claro */
+        }
+        p {
+            font-size: 1.2rem; /* Tamanho de texto de parágrafo ligeiramente maior */
+            line-height: 1.8; /* Altura de linha aumentada para legibilidade */
+            color: #343a40; /* Carvão mais escuro para legibilidade */
+        }
+        ul {
+            font-size: 1.15rem; /* Itens de lista ligeiramente maiores */
+            line-height: 1.7;
+            color: #343a40;
+        }
+        /* Cores de texto personalizadas para consistência */
+        .text-main-heading {
+            color: #004d80; /* Azul profundo consistente para os cabeçalhos principais */
+        }
+        .text-accent-blue {
+            color: #007bff; /* Azul brilhante para o texto do botão e outros acentos */
+        }
+        .text-dark-text {
+            color: #343a40; /* Carvão escuro consistente para legibilidade */
+        }
+        .text-icon-color {
+            color: #17a2b8; /* Ciano/teal para ícones */
+        }
+        .text-green-700 { color: #1e7e34; } /* Verde mais escuro para o cabeçalho no cartão verde */
+        .text-yellow-700 { color: #d39e00; } /* Amarelo mais escuro para o cabeçalho no cartão amarelo */
+        .text-red-700 { color: #bd2130; } /* Vermelho mais escuro para o cabeçalho no cartão vermelho */
+
+        /* Estilos dos botões de Check-in Rápido */
+        .mood-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .mood-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Media queries para responsividade (Tailwind já faz a maior parte disso) */
+        @media (max-width: 640px) { /* Pequenas telas, como celulares */
+            h1 { font-size: 3.5rem; }
+            h2 { font-size: 2.8rem; }
+            h3 { font-size: 2rem; }
+            h4 { font-size: 1.5rem; }
+            p { font-size: 1rem; }
+            ul { font-size: 0.95rem; }
+            .py-24 { padding-top: 4rem; padding-bottom: 4rem; } /* Reduzir padding em telas menores */
+            .py-16 { padding-top: 3rem; padding-bottom: 3rem; }
+        }
+
+        @media (min-width: 641px) and (max-width: 1024px) { /* Telas médias, como tablets */
+            h1 { font-size: 4rem; }
+            h2 { font-size: 3.2rem; }
+            h3 { font-size: 2.2rem; }
+            h4 { font-size: 1.7rem; }
+            p { font-size: 1.1rem; }
+            ul { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Seção do Cabeçalho (O "Cartão de Visita") -->
+    <header class="gradient-bg text-white py-24 rounded-b-3xl shadow-xl flex items-center justify-center relative z-10">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="mb-6">Sinal de Trânsito</h1>
+            <p class="text-4xl opacity-90 font-medium mb-4">Sua bússola para o bem-estar emocional.</p>
+            <p class="text-2xl opacity-80 mt-4 max-w-2xl mx-auto">Uma ferramenta inovadora para monitorar e cuidar da sua saúde mental, com foco na sua jornada pessoal.</p>
+            <a href="#about" class="inline-block mt-16 bg-white text-accent-blue font-extrabold py-6 px-16 rounded-full shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105 animate-pulse-once text-xl">
+                Descubra Mais
+            </a>
+        </div>
+    </header>
+
+    <!-- Seção de Check-in Rápido -->
+    <section id="quick-checkin" class="py-16 bg-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-center mb-10 text-main-heading">Como você se sente hoje?</h2>
+            <p class="text-xl text-dark-text mb-10 max-w-3xl mx-auto">Escolha o sinal que melhor representa seu estado atual para ver o que o "Sinal de Trânsito" sugere:</p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <button id="mood-green" class="mood-button bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full shadow-lg flex items-center">
+                    <i class="fas fa-smile mr-3 text-2xl"></i> Sinal Verde
+                </button>
+                <button id="mood-yellow" class="mood-button bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 px-8 rounded-full shadow-lg flex items-center">
+                    <i class="fas fa-meh mr-3 text-2xl"></i> Sinal Amarelo
+                </button>
+                <button id="mood-red" class="mood-button bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-8 rounded-full shadow-lg flex items-center">
+                    <i class="fas fa-frown mr-3 text-2xl"></i> Sinal Vermelho
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Sobre -->
+    <section id="about" class="py-24 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-center mb-14 text-main-heading">Sobre o "Sinal de Trânsito"</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-12 md:space-y-0 md:space-x-20">
+                <div class="md:w-1/2 text-lg leading-relaxed text-dark-text">
+                    <p class="mb-6">O "Sinal de Trânsito" é uma ferramenta digital intuitiva, desenvolvida para auxiliar você no <strong>monitoramento e gerenciamento proativo do seu bem-estar emocional e mental</strong>. Nosso propósito é <strong>promover o autoconhecimento e o autocuidado em saúde mental</strong>, capacitando-o a reconhecer sinais importantes e a acessar recursos de apoio de forma eficiente.</p>
+                    <p class="mb-6">Com uma interface amigável e um sistema visual claro, a ferramenta facilita o registro diário do seu estado emocional, oferecendo uma representação visual imediata do seu panorama mental ao longo do tempo. Acreditamos firmemente que o acesso democrático e descomplicado a ferramentas de autocuidado é essencial para construir uma sociedade mais consciente, resiliente e saudável.</p>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <img src="semaforos.jpg" alt="[Image of Sinal de Transito Application Interface]" class="rounded-3xl shadow-2xl border-4 border-blue-300 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção do Conceito do Semáforo -->
+    <section id="concept" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-center mb-16 text-main-heading">A Metáfora Visual: Seu Sinal de Trânsito Interno</h2>
+            <p class="text-center text-xl mb-20 max-w-4xl mx-auto text-dark-text">Nossa funcionalidade central utiliza a metáfora amplamente reconhecida do sinal de trânsito para proporcionar uma compreensão rápida e eficaz do seu estado emocional, incentivando a ação apropriada para cada momento.</p>
+
+            <div class="traffic-light-section">
+                <!-- Cartão Sinal Verde -->
+                <div id="card-green" class="light-card green">
+                    <div class="traffic-light-display">
+                        <div class="traffic-light-circle red-light"></div>
+                        <div class="traffic-light-circle yellow-light"></div>
+                        <div class="traffic-light-circle green-light"></div>
+                    </div>
+                    <h3 class="font-bold mb-5 text-green-700">Sinal Verde: Siga em Frente</h3>
+                    <p class="text-dark-text mb-8">Indica um estado de <strong>bem-estar, equilíbrio e resiliência</strong>. Você está com controle, positividade e capacidade de lidar com os desafios diários de forma saudável.</p>
+                    <h4 class="font-semibold text-accent-blue mb-4">Ações Sugeridas:</h4>
+                    <ul class="list-disc list-inside text-left text-dark-text space-y-3">
+                        <li><i class="fas fa-seedling mr-3 text-green-600"></i> Manutenção de práticas de autocuidado.</li>
+                        <li><i class="fas fa-compass mr-3 text-green-600"></i> Exploração de novas atividades para bem-estar.</li>
+                        <li><i class="fas fa-hand-holding-heart mr-3 text-green-600"></i> Exercícios de gratidão e reflexão.</li>
+                        <li><i class="fas fa-users mr-3 text-green-600"></i> Manutenção de conexões sociais saudáveis.</li>
+                    </ul>
+                </div>
+
+                <!-- Cartão Sinal Amarelo -->
+                <div id="card-yellow" class="light-card yellow">
+                    <div class="traffic-light-display">
+                        <div class="traffic-light-circle red-light"></div>
+                        <div class="traffic-light-circle yellow-light"></div>
+                        <div class="traffic-light-circle green-light"></div>
+                    </div>
+                    <h3 class="font-bold mb-5 text-yellow-700">Sinal Amarelo: Atenção</h3>
+                    <p class="text-dark-text mb-8">Um alerta para <strong>cuidado e observação</strong>. Você pode estar experimentando estresse, ansiedade leve, cansaço ou desmotivação. Momento de prevenção.</p>
+                    <h4 class="font-semibold text-accent-blue mb-4">Ações Sugeridas:</h4>
+                    <ul class="list-disc list-inside text-left text-dark-text space-y-3">
+                        <li><i class="fas fa-question-circle mr-3 text-yellow-600"></i> Autoavaliação guiada para identificar desconforto.</li>
+                        <li><i class="fas fa-lungs mr-3 text-yellow-600"></i> Técnicas de relaxamento (respiração, meditação curta).</li>
+                        <li><i class="fas fa-coffee mr-3 text-yellow-600"></i> Fazer pequenas pausas e desconectar-se.</li>
+                        <li><i class="fas fa-comments mr-3 text-yellow-600"></i> Reconexão com amigos ou familiares de confiança.</li>
+                    </ul>
+                </div>
+
+                <!-- Cartão Sinal Vermelho -->
+                <div id="card-red" class="light-card red">
+                    <div class="traffic-light-display">
+                        <div class="traffic-light-circle red-light"></div>
+                        <div class="traffic-light-circle yellow-light"></div>
+                        <div class="traffic-light-circle green-light"></div>
+                    </div>
+                    <h3 class="font-bold mb-5 text-red-700">Sinal Vermelho: Pare</h3>
+                    <p class="text-dark-text mb-8">Indica <strong>sofrimento mental significativo ou crise</strong>. É um chamado urgente para parar, buscar ajuda profissional e não tentar resolver sozinho.</p>
+                    <h4 class="font-semibold text-accent-blue mb-4">Ações Sugeridas:</h4>
+                    <ul class="list-disc list-inside text-left text-dark-text space-y-3">
+                        <li><i class="fas fa-phone-volume mr-3 text-red-600"></i> Acesso rápido a números de emergência (CVV, SAMU).</li>
+                        <li><i class="fas fa-hands-helping mr-3 text-red-600"></i> Contato com sua rede de apoio imediata.</li>
+                        <li><i class="fas fa-headphones mr-3 text-red-600"></i> Recursos de crise (áudios de acalmamento).</li>
+                        <li><i class="fas fa-user-md mr-3 text-red-600"></i> Informações sobre como procurar profissionais de saúde.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Funcionalidades Essenciais -->
+    <section id="features" class="py-24 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-center mb-14 text-main-heading">Funcionalidades Essenciais</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div class="feature-card">
+                    <i class="fas fa-calendar-check text-icon-color text-6xl mb-6"></i>
+                    <h3 class="font-semibold mb-4 text-3xl">Check-in Diário do Humor</h3>
+                    <p class="text-dark-text">Registre seu estado emocional selecionando seu "sinal de trânsito" e adicione detalhes como emoções específicas, fatores contribuintes e notas no diário, tudo de forma intuitiva.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line text-icon-color text-6xl mb-6"></i>
+                    <h3 class="font-semibold mb-4 text-3xl">Visualização do Histórico</h3>
+                    <p class="text-dark-text">Acompanhe seu bem-estar ao longo do tempo com gráficos claros e um calendário codificado por cores. Identifique padrões e tendências em seu humor para um autoconhecimento profundo.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-book-open text-icon-color text-6xl mb-6"></i>
+                    <h3 class="font-semibold mb-4 text-3xl">Biblioteca de Recursos Personalizados</h3>
+                    <p class="text-dark-text">Acesse uma vasta biblioteca com artigos, vídeos, podcasts e exercícios sobre saúde mental, cuidadosamente curados e com recomendações baseadas no seu sinal atual.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-hand-holding-medical text-icon-color text-6xl mb-6"></i>
+                    <h3 class="font-semibold mb-4 text-3xl">Conexão com Profissionais</h3>
+                    <p class="text-dark-text">Em situações de crise (sinal vermelho), acesse rapidamente números de emergência (CVV, SAMU) e informações claras sobre como e onde procurar ajuda profissional.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bell text-icon-color text-6xl mb-6"></i>
+                    <h3 class="font-semibold mb-4 text-3xl">Lembretes Personalizáveis</h3>
+                    <p class="text-dark-text">Defina lembretes customizados para seu check-in diário de humor e receba notificações para realizar exercícios de autocuidado, ajudando a manter uma rotina saudável.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-lightbulb text-icon-color text-6xl mb-6"></i>
+                    <h3 class="font-semibold mb-4 text-3xl">Insights Personalizados</h3>
+                    <p class="text-dark-text">Receba análises inteligentes do seu histórico para identificar padrões de comportamento e gatilhos emocionais, aprofundando seu autoconhecimento e estratégias de manejo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Chamada para Ação -->
+    <section class="gradient-bg text-white py-20 rounded-t-3xl shadow-xl">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="font-bold mb-10">Pronto para Iniciar Sua Jornada de Autocuidado?</h2>
+            <p class="text-2xl mb-12 opacity-90">O "Sinal de Trânsito" é o seu guia intuitivo para uma vida mais consciente e equilibrada.</p>
+            <a href="#" class="inline-block bg-white text-accent-blue font-bold py-5 px-12 rounded-full shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                Acesse aqui
+            </a>
+        </div>
+    </section>
+
+    <!-- Seção do Rodapé -->
+    <footer class="bg-gray-900 text-white py-10">
+        <div class="container mx-auto px-6 text-center text-gray-400">
+            <p class="text-lg">&copy; 2024 Sinal de Trânsito. Todos os direitos reservados.</p>
+            <p class="mt-3 text-md">Promovendo o autocuidado e o bem-estar mental.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Rolagem suave para links internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Funcionalidade de Check-in Rápido
+            const moodButtons = document.querySelectorAll('#quick-checkin button');
+            moodButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    let targetCardId = '';
+                    if (button.id === 'mood-green') {
+                        targetCardId = 'card-green';
+                    } else if (button.id === 'mood-yellow') {
+                        targetCardId = 'card-yellow';
+                    } else if (button.id === 'mood-red') {
+                        targetCardId = 'card-red';
+                    }
+
+                    if (targetCardId) {
+                        const targetCard = document.getElementById(targetCardId);
+                        if (targetCard) {
+                            // Remove destaque de qualquer cartão anterior
+                            document.querySelectorAll('.light-card').forEach(card => {
+                                card.classList.remove('highlight');
+                            });
+
+                            // Adiciona a classe de destaque ao cartão clicado
+                            targetCard.classList.add('highlight');
+
+                            // Rolagem para o cartão
+                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                            // Remove o destaque após um atraso
+                            setTimeout(() => {
+                                targetCard.classList.remove('highlight');
+                            }, 1500); // Destaque por 1.5 segundos
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
